@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discover Europe - Exclusive Private Tours</title>
+    <link rel="icon" type="image/png" href="/img/favicon.png">
+    <style>
+        /* ==============================================
+           RESET & BASE STYLES
+        ============================================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #1a1a1a;
+            overflow-x: hidden;
+        }
+
+        /* ==============================================
+           UTILITY CLASSES
+        ============================================== */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ==============================================
+           HEADER & NAVIGATION
+        ============================================== */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 1000;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            height: 80px; /* Added fixed height */
+        }
+
+        .logo {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.5px;
+            z-index: 10; /* Ensure logo is on top */
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #1a1a1a;
+            font-weight: 500;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-cta {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        /* HAMBURGER MENU STYLES START */
+        .hamburger {
+            display: none;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .hamburger .line {
+            width: 30px;
+            height: 3px;
+            background: #1a1a1a;
+            margin: 6px 0;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        /* HAMBURGER MENU STYLES END */
+
+
+        /* ==============================================
+           HERO SECTION
+        ============================================== */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* --- СТИЛИ ДЛЯ СЛАЙД-ШОУ --- */
+        .hero-slideshow {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1; /* Помещает слайд-шоу за текстом */
+            background-color: #333; /* Фоновый цвет на случай, если фото не загрузятся */
+        }
+        
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0; /* Все слайды по умолчанию невидимы */
+            transition: opacity 1.5s ease-in-out; /* Анимация плавного появления/исчезновения */
+            animation: kenburns 20s infinite; /* Эффект лёгкого приближения/движения */
+        }
+        
+        .slide::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.4); /* Затемняющий слой для читаемости текста */
+        }
+
+        .slide.active {
+            opacity: 1; /* Активный слайд становится видимым */
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 900px;
+            animation: fadeInUp 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            margin-bottom: 24px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            text-shadow: 0 4px 20px rgba(0,0,0,0.2);
+        }
+
+        .hero-subtitle {
+            font-size: clamp(1.2rem, 3vw, 1.8rem);
+            margin-bottom: 40px;
+            opacity: 0.95;
+            font-weight: 300;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-cta {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 18px 40px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 18px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(20px);
+        }
+
+        .hero-cta:hover {
+            background: rgba(255, 255, 255, 0.25);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        /* ==============================================
+           ABOUT SECTION
+        ============================================== */
+        .about {
+            padding: 120px 0;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            position: relative;
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(102,126,234,0.03)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+        }
+
+        .about-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            position: relative;
+        }
+
+        .about-text h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 32px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .about-text p {
+            font-size: 18px;
+            line-height: 1.8;
+            margin-bottom: 24px;
+            color: #475569;
+            font-weight: 400;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 48px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 24px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .about-image {
+            position: relative;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.15);
+            transition: transform 0.4s ease;
+        }
+
+        .about-image:hover {
+            transform: translateY(-8px);
+        }
+
+        .about-image img {
+            width: 100%;
+            height: 500px;
+            object-fit: cover;
+        }
+
+        /* ==============================================
+           SERVICES SECTION
+        ============================================== */
+        .services {
+            padding: 120px 0;
+            background: #ffffff;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 64px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+            gap: 32px;
+        }
+
+        .service-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border-radius: 24px;
+            padding: 48px 32px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2, #f093fb);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .service-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(102, 126, 234, 0.15);
+        }
+
+        .service-icon {
+            font-size: 48px;
+            margin-bottom: 24px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .service-card h3 {
+            font-size: 24px;
+            margin-bottom: 16px;
+            color: #1a1a1a;
+            font-weight: 600;
+        }
+
+        .service-card p {
+            color: #64748b;
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .service-price {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ==============================================
+           GALLERY SECTION
+        ============================================== */
+        .gallery {
+            padding: 120px 0;
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 24px;
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 20px;
+            overflow: hidden;
+            aspect-ratio: 16 /9;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1);
+        }
+
+        .gallery-item:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.1);
+        }
+
+        .gallery-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(45deg, rgba(102, 126, 234, 0.8), rgba(118, 75, 162, 0.8));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+        }
+
+        .gallery-item:hover .gallery-overlay {
+            opacity: 1;
+        }
+
+        /* ==============================================
+           LIGHTBOX STYLES
+        ============================================== */
+        .lightbox {
+            display: none; /* Скрыто по умолчанию */
+            position: fixed; /* Остается на месте даже при прокрутке */
+            z-index: 1001; /* Поверх всего */
+            left: 0;
+            top: 0;
+            width: 100%; /* Полная ширина */
+            height: 100%; /* Полная высота */
+            overflow: auto; /* Включить прокрутку, если содержимое слишком большое */
+            background-color: rgba(0, 0, 0, 0.9); /* Черный с прозрачностью */
+            backdrop-filter: blur(10px); /* Эффект размытия */
+            -webkit-backdrop-filter: blur(10px); /* Для Safari */
+            justify-content: center; /* Центрирование содержимого */
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .lightbox-content {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 80%;
+            object-fit: contain; /* Сохраняет соотношение сторон и помещается */
+            animation: zoomIn 0.6s;
+            border-radius: 10px;
+            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .lightbox-caption {
+            margin-top: 20px;
+            text-align: center;
+            color: #f1f1f1;
+            font-size: 1.2rem;
+            padding: 10px 0;
+        }
+
+        /* Кнопка закрытия */
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+            z-index: 1002;
+        }
+
+        .lightbox-close:hover,
+        .lightbox-close:focus {
+            color: #bbb;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Кнопки навигации */
+        .lightbox-prev, .lightbox-next {
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            width: auto;
+            padding: 16px;
+            color: white;
+            font-weight: bold;
+            font-size: 20px;
+            transition: 0.6s ease;
+            border-radius: 0 3px 3px 0;
+            user-select: none;
+            -webkit-user-select: none;
+            background-color: rgba(0, 0, 0, 0.5);
+            transform: translateY(-50%);
+            z-index: 1002;
+        }
+
+        .lightbox-next {
+            right: 0;
+            border-radius: 3px 0 0 3px;
+        }
+
+        .lightbox-prev {
+            left: 0;
+            border-radius: 0 3px 3px 0;
+        }
+
+        .lightbox-prev:hover, .lightbox-next:hover {
+            background-color: rgba(0, 0, 0, 0.8);
+        }
+
+        /* Анимация при открытии лайтбокса */
+        @keyframes zoomIn {
+            from {transform: scale(0.8);}
+            to {transform: scale(1);}
+        }
+
+        /* Стили для видео в галерее */
+        .gallery-item.video-item video {
+            width: 100%;
+            height: 100%; /* Занимает всю высоту родителя */
+            object-fit: cover; /* Обрезает видео, чтобы оно заполнило контейнер */
+            border-radius: 20px; /* Применяет скругление углов, как у изображений */
+            transition: transform 0.4s ease;
+        }
+
+        .gallery-item.video-item video:hover {
+            transform: scale(1.1); /* Эффект зума при наведении, как у изображений */
+        }
+
+        /* ==============================================
+           CONTACT SECTION
+        ============================================== */
+        .contact {
+            padding: 120px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #f5576c 75%, #4facfe 100%);
+            color: white;
+            position: relative;
+        }
+
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            position: relative;
+        }
+
+        .contact-info h2 {
+            font-size: clamp(2.5rem, 5vw, 4rem);
+            margin-bottom: 32px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .contact-info p {
+            font-size: 18px;
+            margin-bottom: 48px;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 24px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .contact-item i {
+            margin-right: 16px;
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .contact-form {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 48px;
+            border-radius: 24px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 24px;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 16px 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+            font-size: 16px;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .form-group input::placeholder,
+        .form-group textarea::placeholder {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .submit-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* ==============================================
+           FOOTER
+        ============================================== */
+        footer {
+            background: #1a1a1a;
+            color: white;
+            padding: 48px 0;
+            text-align: center;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 16px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .footer-section p,
+        .footer-section a {
+            color: #94a3b8;
+            text-decoration: none;
+            line-height: 1.6;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #334155;
+            padding-top: 24px;
+            color: #94a3b8;
+        }
+
+        /* ==============================================
+           ANIMATIONS
+        ============================================== */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Эффект лёгкого движения (Ken Burns) */
+        @keyframes kenburns {
+            0% {
+                transform: scale(1) translate(0, 0);
+            }
+            50% {
+                transform: scale(1.1) translate(-2%, 2%);
+            }
+            100% {
+                transform: scale(1) translate(0, 0);
+            }
+        }
+
+        /* ==============================================
+           RESPONSIVE DESIGN
+        ============================================== */
+        @media (max-width: 768px) {
+            .nav-cta {
+                display: none; /* Hide original CTA on mobile */
+            }
+            .hamburger {
+                display: block; /* Show hamburger on mobile */
+            }
+            
+            /* Styles for the mobile navigation panel */
+            .nav-links {
+                position: fixed;
+                top: 0;
+                right: -100%; /* Start off-screen */
+                width: 100%;
+                height: 100vh;
+                background: white;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                gap: 32px;
+                transition: right 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            }
+
+            .nav-links.nav-active {
+                right: 0; /* Slide in */
+            }
+            
+            /* Style links for mobile view */
+            .nav-links a {
+                font-size: 24px;
+                color: #1a1a1a;
+            }
+            .nav-links a::after {
+              display: none; /* Hide underline animation on mobile */
+            }
+
+            /* Animate hamburger to a cross */
+            .hamburger.toggle .line:nth-child(1) {
+                transform: rotate(-45deg) translate(-7px, 7px);
+            }
+            .hamburger.toggle .line:nth-child(2) {
+                opacity: 0;
+            }
+            .hamburger.toggle .line:nth-child(3) {
+                transform: rotate(45deg) translate(-7px, -7px);
+            }
+
+            /* Responsive content sections */
+            .about-content,
+            .contact-content {
+                grid-template-columns: 1fr;
+                gap: 48px;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .services-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-content {
+                padding: 0 20px;
+            }
+        }
+
+        /* ==============================================
+           SMOOTH SCROLLING
+        ============================================== */
+        html {
+            scroll-behavior: smooth;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">🌍 EuroExplore</div>
+            <ul class="nav-links">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#services">Tours</a></li>
+                <li><a href="#gallery">Gallery</a></li>
+                <li><a href="#contact">Contact</a></li>
+            </ul>
+            <a href="#contact" class="nav-cta">Book Now</a>
+            <div class="hamburger">
+                <div class="line"></div>
+                <div class="line"></div>
+                <div class="line"></div>
+            </div>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-slideshow">
+            <div class="slide" style="background-image: url('photo1.jpg');"></div>
+            <div class="slide" style="background-image: url('photo2.jpg');"></div>
+            <div class="slide" style="background-image: url('photo3.jpg');"></div>
+        </div>
+    
+        <div class="hero-content">
+            <h1>Discover Paradise Like Never Before</h1>
+            <p class="hero-subtitle">Premium private tours crafted for discerning travelers. Experience the world's hidden gems with our expert local guides.</p>
+            <a href="#services" class="hero-cta">
+                <span>Explore Our Tours</span>
+                <span>→</span>
+            </a>
+        </div>
+    </section>
+
+    <section id="about" class="about">
+        <div class="container">
+            <div class="about-content fade-in">
+                <div class="about-text">
+                    <h2>Your Adventure Begins Here</h2>
+                    <p>For over a decade, we've been crafting extraordinary journeys through the world's most captivating destinations. Our passion lies in revealing the authentic soul of each location, beyond the typical tourist experience.</p>
+                    <p>From idyllic beaches to ancient temples, from vibrant local markets to serene natural landscapes – we connect you with real experiences through carefully curated tours and insider access.</p>
+                    <p>Our small group tours ensure personalized attention, while our local expertise guarantees you'll discover stories and places that guidebooks never mention.</p>
+                    
+                    <div class="stats">
+                        <div class="stat-item">
+                            <div class="stat-number">500+</div>
+                            <div class="stat-label">Happy Travelers</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">20+</div>
+                            <div class="stat-label">Amazing Destinations</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number">10</div>
+                            <div class="stat-label">Years Experience</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="about-image">
+                    <img src="img1.jpg" alt="Exotic Landscape">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="services" class="services">
+        <div class="container">
+            <h2 class="section-title fade-in">Premium Tour Experiences</h2>
+            <div class="services-grid">
+                <div class="service-card fade-in">
+                    <div class="service-icon">🏛️</div>
+                    <h3>Historical Immersion</h3>
+                    <p>Step back in time with our expert historians. Explore ancient ruins, majestic temples, and cultural masterpieces with stories that bring history to life.</p>
+                    <div class="service-price">From €295</div>
+                </div>
+                
+                <div class="service-card fade-in">
+                    <div class="service-icon">🎨</div>
+                    <h3>Art & Culture Tours</h3>
+                    <p>Discover unique artistic heritage. From local craft workshops to stunning galleries, experience world-class art with passionate local guides.</p>
+                    <div class="service-price">From €385</div>
+                </div>
+                
+                <div class="service-card fade-in">
+                    <div class="service-icon">🍷</div>
+                    <h3>Culinary Adventures</h3>
+                    <p>Taste your way through the finest local cuisine. Food markets, cooking classes, and hidden local eateries await your palate.</p>
+                    <div class="service-price">From €450</div>
+                </div>
+                
+                <div class="service-card fade-in">
+                    <div class="service-icon">🏝️</div>
+                    <h3>Island Hopping</h3>
+                    <p>Marvel at stunning natural beauty. From hidden lagoons to pristine beaches, discover the paradise islands of your dreams.</p>
+                    <div class="service-price">From €325</div>
+                </div>
+                
+                <div class="service-card fade-in">
+                    <div class="service-icon">🌊</div>
+                    <h3>Diving & Snorkeling</h3>
+                    <p>Explore vibrant underwater worlds. Discover colorful coral reefs and marine life in some of the best diving spots on the planet.</p>
+                    <div class="service-price">From €395</div>
+                </div>
+                
+                <div class="service-card fade-in">
+                    <div class="service-icon">🧘</div>
+                    <h3>Wellness & Retreats</h3>
+                    <p>Experience ultimate relaxation and rejuvenation. From yoga retreats to spa treatments, find your inner peace in a tranquil setting.</p>
+                    <div class="service-price">From €525</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="gallery" class="gallery">
+        <div class="container">
+            <h2 class="section-title fade-in">Captured Moments</h2>
+            <div class="gallery-grid">
+                <div class="gallery-item fade-in gallery-group" data-images='["./img/gallery1/photo1.jpg", "./img/gallery1/photo2.jpg", "./img/gallery1/photo3.jpg", "./img/gallery1/photo4.jpg"]'>
+                    <div class="gallery-thumbnails">
+                        <img src="./img/gallery1/photo1.jpg" alt="Архитектура Европы">
+                        <div class="gallery-overlay">Достопримечательности (4 фото)</div>
+                    </div>
+                </div>
+
+                <div class="gallery-item fade-in gallery-group" data-images='["./img/gallery2/photo1.jpg", "./img/gallery2/photo2.jpg", "./img/gallery2/photo3.jpg", "./img/gallery2/photo4.jpg"]'>
+                    <div class="gallery-thumbnails">
+                        <img src="./img/gallery2/photo1.jpg" alt="Альпийские пейзажи">
+                        <div class="gallery-overlay">Природа и пейзажи (4 фото)</div>
+                    </div>
+                </div>
+
+                <div class="gallery-item fade-in gallery-group" data-images='["./img/gallery3/photo1.jpg", "./img/gallery3/photo2.jpg", "./img/gallery3/photo3.jpg", "./img/gallery3/photo4.jpg"]'>
+                    <div class="gallery-thumbnails">
+                        <img src="./img/gallery3/photo1.jpg" alt="Уютные улицы города">
+                        <div class="gallery-overlay">Городская жизнь (4 фото)</div>
+                    </div>
+                </div>
+
+               <div class="gallery-item fade-in video-item clickable-video-item"> <video controls playsinline preload="metadata" poster="./img/video1-poster.jpg">
+        <source src="./video/video1.mp4" type="video/mp4">
+        Ваш браузер не поддерживает тег video.
+    </video>
+    <div class="gallery-overlay video-overlay">Презентация тура</div> </div>
+
+<div class="gallery-item fade-in video-item clickable-video-item"> <video controls playsinline preload="metadata" poster="./img/video2-poster.jpg">
+        <source src="./video/video2.mp4" type="video/mp4">
+        Ваш браузер не поддерживает тег video.
+    </video>
+    <div class="gallery-overlay video-overlay">Подводный мир</div> </div>
+
+<div class="gallery-item fade-in video-item clickable-video-item"> <video controls playsinline preload="metadata" poster="./img/video3-poster.jpg">
+        <source src="./video/video3.mp4" type="video/mp4">
+        Ваш браузер не поддерживает тег video.
+    </video>
+    <div class="gallery-overlay video-overlay">Виды с воздуха</div> </div>
+
+            <div id="lightbox" class="lightbox">
+                <span class="lightbox-close">&times;</span>
+                <img class="lightbox-content" id="lightbox-img" src="" alt="Full size image">
+                <div class="lightbox-caption" id="lightbox-caption"></div>
+                <a class="lightbox-prev" aria-label="Предыдущее фото">&#10094;</a>
+                <a class="lightbox-next" aria-label="Следующее фото">&#10095;</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="contact-content">
+                <div class="contact-info fade-in">
+                    <h2>Let's Plan Your Dream Adventure</h2>
+                    <p>Ready to discover hidden treasures? Contact us to create your personalized journey through the world's most captivating destinations.</p>
+                    
+                    <div class="contact-item">
+                        <i>📞</i>
+                        <span>+62 123 456 7890</span>
+                    </div>
+                    <div class="contact-item">
+                        <i>✉️</i>
+                        <span>contact@paradiseexplore.com</span>
+                    </div>
+                    <div class="contact-item">
+                        <i>📍</i>
+                        <span>Bali, Indonesia</span>
+                    </div>
+                </div>
+                
+                <div class="contact-form fade-in">
+                    <form action="https://docs.google.com/forms/u/0/d/1stn-uj_O3mi6AwrVlT2HFRYUX0PNelZw6IdQ-uNu5Pw/formResponse" method="POST">
+                        <div class="form-group">
+                            <input type="text" name="entry.2076409583" placeholder="Your Name" required>
+                        </div>
+                        <div class="form-group">
+                            <input type="email" name="entry.1217597180" placeholder="Your Email" required>
+                        </div>
+                        <div class="form-group">
+                            <textarea name="entry.1613898241" placeholder="Your Message" required></textarea>
+                        </div>
+                        <button type="submit" class="submit-btn">Send Inquiry</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="container footer-content">
+            <div class="footer-section">
+                <h3>About ParadiseExplore</h3>
+                <p>Crafting unforgettable private tours across the globe for over a decade. Discover the heart of paradise with us.</p>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <a href="#about">About</a><br>
+                <a href="#services">Tours</a><br>
+                <a href="#contact">Contact</a>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: contact@paradiseexplore.com</p>
+                <p>Phone: +62 123 456 7890</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2025 ParadiseExplore. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // --- Hamburger Menu Functionality ---
+        const hamburger = document.querySelector('.hamburger');
+        const navLinks = document.querySelector('.nav-links');
+        const links = document.querySelectorAll('.nav-links li a');
+
+        // Toggle nav menu on hamburger click
+        hamburger.addEventListener('click', () => {
+            navLinks.classList.toggle('nav-active');
+            hamburger.classList.toggle('toggle');
+        });
+
+        // Close nav menu when a link is clicked
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('nav-active');
+                hamburger.classList.remove('toggle');
+            });
+        });
+
+
+        // --- Fade-in on Scroll Animation Functionality ---
+        const faders = document.querySelectorAll('.fade-in');
+        
+        const appearOptions = {
+            threshold: 0.2, // trigger when 20% of the element is in view
+            rootMargin: "0px 0px -50px 0px" // trigger a bit sooner
+        };
+
+        const appearOnScroll = new IntersectionObserver(function(
+            entries,
+            appearOnScroll
+        ) {
+            entries.forEach(entry => {
+                if (!entry.isIntersecting) {
+                    return;
+                } else {
+                    entry.target.classList.add('visible');
+                    appearOnScroll.unobserve(entry.target);
+                }
+            });
+        },
+        appearOptions);
+
+        faders.forEach(fader => {
+            appearOnScroll.observe(fader);
+        });
+
+        // --- Slideshow Functionality ---
+        const slides = document.querySelectorAll('.hero-slideshow .slide');
+        let currentSlide = 0;
+
+        function showSlide() {
+            // Сначала делаем все слайды неактивными
+            slides.forEach(slide => slide.classList.remove('active'));
+            
+            // Делаем текущий слайд активным
+            slides[currentSlide].classList.add('active');
+            
+            // Переключаемся на следующий слайд
+            currentSlide = (currentSlide + 1) % slides.length;
+        }
+
+        // Запускаем смену слайдов при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            if (slides.length > 0) {
+                showSlide(); // Показать первый слайд сразу
+                // Меняем слайд каждые 3 минуты (180000 миллисекунд)
+                setInterval(showSlide, 180000); 
+            }
+        });
+
+        // --- Lightbox Functionality for Gallery Groups ---
+        const galleryGroups = document.querySelectorAll('.gallery-group');
+        const lightbox = document.getElementById('lightbox');
+        const lightboxImg = document.getElementById('lightbox-img');
+        const lightboxCaption = document.getElementById('lightbox-caption');
+        const closeBtn = document.querySelector('.lightbox-close');
+        const prevBtn = document.querySelector('.lightbox-prev');
+        const nextBtn = document.querySelector('.lightbox-next');
+
+        let currentImageIndex = 0;
+        let currentImages = []; // Массив изображений для текущей открытой галереи
+
+        function openLightbox(images, startIndex) {
+            currentImages = images;
+            currentImageIndex = startIndex;
+            lightbox.style.display = 'flex'; // Используем flex для центрирования
+            displayImage(currentImageIndex);
+            document.body.style.overflow = 'hidden'; // Запретить прокрутку страницы
+        }
+
+        function closeLightbox() {
+            lightbox.style.display = 'none';
+            document.body.style.overflow = ''; // Возобновить прокрутку страницы
+        }
+
+        function displayImage(index) {
+            if (currentImages.length > 0) {
+                lightboxImg.src = currentImages[index];
+                lightboxCaption.textContent = `Изображение ${index + 1} из ${currentImages.length}`;
+            }
+        }
+
+        function showNextImage() {
+            currentImageIndex = (currentImageIndex + 1) % currentImages.length;
+            displayImage(currentImageIndex);
+        }
+
+        function showPrevImage() {
+            currentImageIndex = (currentImageIndex - 1 + currentImages.length) % currentImages.length;
+            displayImage(currentImageIndex);
+        }
+
+        // Обработчики событий для каждого блока галереи
+        galleryGroups.forEach(group => {
+            group.addEventListener('click', (e) => {
+                const imagesJson = group.getAttribute('data-images');
+                const images = JSON.parse(imagesJson);
+                
+                // Находим индекс кликнутого изображения, если это миниатюра
+                let clickedImgSrc = e.target.src;
+                let startIndex = images.findIndex(img => clickedImgSrc && clickedImgSrc.includes(img.split('/').pop()));
+
+                // Если кликнули на overlay или сам gallery-item, открываем первое изображение
+                if (startIndex === -1) {
+                    startIndex = 0;
+                }
+                
+                openLightbox(images, startIndex);
+            });
+        });
+
+        // Обработчики событий для кнопок лайтбокса
+        closeBtn.addEventListener('click', closeLightbox);
+        prevBtn.addEventListener('click', showPrevImage);
+        nextBtn.addEventListener('click', showNextImage);
+
+        // Закрытие лайтбокса по ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && lightbox.style.display === 'flex') {
+                closeLightbox();
+            }
+            if (e.key === 'ArrowRight' && lightbox.style.display === 'flex') {
+                showNextImage();
+            }
+            if (e.key === 'ArrowLeft' && lightbox.style.display === 'flex') {
+                showPrevImage();
+            }
+        });
+
+        // Закрытие лайтбокса по клику вне изображения
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox) {
+                closeLightbox();
+            }
+        });
+// --- Video Overlay Click-to-Play Functionality ---
+        document.querySelectorAll('.clickable-video-item').forEach(videoItem => {
+            const videoElement = videoItem.querySelector('video');
+            const overlayElement = videoItem.querySelector('.video-overlay');
+
+            if (videoElement && overlayElement) {
+                // Изначально скрываем нативные элементы управления видео, пока активен оверлей
+                videoElement.controls = false; 
+
+                // Добавляем обработчик клика на оверлей
+                overlayElement.addEventListener('click', () => {
+                    // Воспроизводим видео
+                    videoElement.play();
+                    // Скрываем оверлей плавно
+                    overlayElement.style.opacity = '0';
+                    overlayElement.style.visibility = 'hidden';
+                    // Показываем нативные элементы управления видео
+                    videoElement.controls = true;
+                });
+
+                // Опционально: показываем оверлей обратно, если видео закончилось или было поставлено на паузу
+                videoElement.addEventListener('ended', () => {
+                    overlayElement.style.opacity = '1';
+                    overlayElement.style.visibility = 'visible';
+                    videoElement.controls = false;
+                });
+                videoElement.addEventListener('pause', () => {
+                    // Показываем оверлей только если видео не только что началось и не закончилось
+                    if (videoElement.currentTime > 0 && !videoElement.ended) { 
+                        overlayElement.style.opacity = '1';
+                        overlayElement.style.visibility = 'visible';
+                        videoElement.controls = false;
+                    }
+                });
+            }
+        });
+        
+    </script>
+</body>
+</html>
